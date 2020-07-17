@@ -1,0 +1,460 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>深度影梭客户端原理剖析 | 大黄老鼠的番茄酱</title>
+<link rel="shortcut icon" href="https://blog.pikachu.net.cn/favicon.ico?v=1594996394376">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.pikachu.net.cn/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="深度影梭客户端原理剖析 | 大黄老鼠的番茄酱 - Atom Feed" href="https://blog.pikachu.net.cn/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="整个项目都遵守GPLv3许可证协议，欢迎各位大神贡献代码，欢迎提issue。
+⚠️：由于某些原因，关闭项目
+
+为什么要做影梭客户端？
+我在win上习惯了挂着ss-win，走局部代理(pac模式)。而deepin上的ss-qt5虽然能开代理，..." />
+    <meta name="keywords" content="deepin" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.pikachu.net.cn">
+  <img class="avatar" src="https://blog.pikachu.net.cn/images/avatar.png?v=1594996394376" alt="">
+  </a>
+  <h1 class="site-title">
+    大黄老鼠的番茄酱
+  </h1>
+  <p class="site-description">
+    我以前没得选择，现在我想做一个好人。——阿明
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="https://www.yuque.com/pikachuhy/leetcode" class="menu" target="_blank">
+          LeetCode
+        </a>
+      
+    
+      
+        <a href="/post/manfest/" class="menu">
+          Manfest
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PikachuHy" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              深度影梭客户端原理剖析
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-08-22
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+                <a href="https://blog.pikachu.net.cn/tag/Ou8ZxuOIol/" class="post-tag">
+                  # deepin
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="http://cdn.pikachu.net.cn/ss-client/shadowsocks.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>整个项目都遵守GPLv3许可证协议，欢迎各位大神贡献代码，欢迎提issue。</p>
+<p>⚠️：由于某些原因，关闭项目</p>
+<!-- more -->
+<h1 id="为什么要做影梭客户端">为什么要做影梭客户端？</h1>
+<p>我在win上习惯了挂着ss-win，走局部代理(pac模式)。而deepin上的ss-qt5虽然能开代理，但是局部代理(pac模式)没有实现。所以自己就动手写了一个ss-client。界面，源码大量的借鉴了ss-win，ss-qt5以及deepin的许多开源项目。</p>
+<p>我做ss-client的出发点是界面美观，操作简便，功能够用就好。</p>
+<ul>
+<li>界面美观</li>
+</ul>
+<p>使用Qt开发，采用deepin的插件，软件的风格和界面的样式等契合deepin的整体效果。</p>
+<ul>
+<li>操作简单</li>
+</ul>
+<p>当自己有ss账号，把ss-client点开，配好自己的ss账号，就能使用，自动处理pac的配置问题，GFWList的更新问题，开机自启问题，只需要简单的开关就能科学上网。</p>
+<ul>
+<li>功能够用就好</li>
+</ul>
+<p>谷歌或者火狐浏览器，启动ss-client就能正常上google，youtube。</p>
+<h1 id="技术原理剖析">技术原理剖析</h1>
+<p>通过学习开源项目，了解更多软件开发方面的知识，同时提升自身的编码能力。在掌握相关的知识后，输出文档，记录下学习历程，既方便自己查阅，又能和他人交流。</p>
+<h2 id="ss代理的实现">ss代理的实现</h2>
+<p>借助开源项目<a href="https://github.com/shadowsocks/libQtShadowsocks">shadowsocks/libQtShadowsocks</a>，可以很方便的在拥有ss账号的情况下，启动sock5代理。</p>
+<pre><code class="language-c++">QSS::Profile profile;
+QSS::Controller* controller = new Controller(true);
+controller-&gt;setup(profile);
+controller-&gt;start();
+</code></pre>
+<p>这么就能启动代理了。使用<code>proxychains curl www.google.com</code>就能在命令行上访问google的。</p>
+<p>在上面的代码中，<code>QSS::Profile</code>就是ss账号，它是一个结构体，看源码</p>
+<pre><code class="language-c++">namespace QSS {
+
+struct Profile {
+    QString server;
+    QString local_address;
+    QString method;
+    QString password;
+    quint16 server_port;
+    quint16 local_port;
+    int timeout;
+
+    /*
+     * Set http_proxy to true then the local will serve as HTTP proxy server.
+     * Because the HttpProxy is a second-level proxy, the actual process is to
+     * use a random available port as SOCKS5 and then set HttpProxy listen on
+     * the local port and forward traffics via SOCKS5 proxy.
+     * It's false by default.
+     */
+    bool http_proxy;
+    bool debug;//turn on debug output or not
+    bool auth;
+
+    Profile();
+
+    /*
+     * Construct Profile using ss:// URI
+     * Please check https://shadowsocks.org/en/config/quick-guide.html for more
+     * details. Undefined behaviour if uri is invalid.
+     */
+    Profile(QByteArray uri);
+
+    // Encode profile as a ss:// URI
+    QByteArray toURI();
+};
+
+}
+</code></pre>
+<p>和shadowsocks的配置文件是相对应的，具体请参考 <a href="https://shadowsocks.org/en/config/quick-guide.html">shadowsocks Quick Guide</a></p>
+<pre><code class="language-json">{
+    &quot;server&quot;:&quot;my_server_ip&quot;,
+    &quot;server_port&quot;:8388,
+    &quot;local_port&quot;:1080,
+    &quot;password&quot;:&quot;barfoo!&quot;,
+    &quot;timeout&quot;:600,
+    &quot;method&quot;:&quot;chacha20-ietf-poly1305&quot;
+}
+</code></pre>
+<p>但是这样还不能直接用谷歌或火狐访问google，还需要在控制中心中配置(ss-qt5必须配才能用)，而我做的事情就是干掉了这一步，ss-client帮忙做了。ss-client是如何做到的呢？答案是借助<a href="linuxdeepin/dde-control-center">linuxdeepin/dde-control-center</a>中的一个辅助类<code>NetworkInter</code>。</p>
+<h2 id="三种代理方式的实现">三种代理方式的实现</h2>
+<p>这个辅助类是何方神圣呢？其实是通过DBus调用了dde-api。所谓dde-api，即</p>
+<blockquote>
+<p>dde-daemon dbus API:<br>
+这一部分主要是由dde-session-daemon和dde-system-daemon提供的DBus接口给深度控制中心前端界面使用的，外部应用程序也可以直接使用这部分API来快速开发，而不用自己研究和编写与系统底层软硬件打交到的代码，简单的说几个功能，感兴趣的朋友可以直接查看深度控制中心的界面代码来玩（<a href="https://github.com/linuxdeepin/dde-control-center">https://github.com/linuxdeepin/dde-control-center</a>):</p>
+<ul>
+<li>查询当前系统有几个屏幕，哪些屏幕是主屏，分辨率是多少？</li>
+<li>查询当前系统的语言、亮度、音量等设置</li>
+<li>查询当前系统的网络链接状态：连接的是无线还是有线，有没有开启VPN?</li>
+<li>查询当前系统的日期时间、时区、键盘鼠标等外设的状态<br>
+只要控制中心界面显示的所有硬件状态，都可以通过dde-api提供的DBus接口服务查询到，而这些DBus API后面的源代码都是深度操作系统研发人员经过非常多的时间打磨好的，不用自己痛苦的去裸写底层库(network-manager、pluseaudio、bluez、upower、udisk等）代码，大大节约了应用开发者编写高级功能的时间和投入成本。</li>
+</ul>
+<p>——摘自<a href="http://www.jianshu.com/p/e871723f9460">深度桌面操作系统架构设计</a></p>
+</blockquote>
+<p>源码摘录，全部请查看<a href="https://raw.githubusercontent.com/linuxdeepin/dde-daemon/master/network/manager_proxy.go">manager_proxy.go</a></p>
+<pre><code class="language-go">func (m *Manager) SetProxyMethod(proxyMode string) (err error) {
+	logger.Info(&quot;SetProxyMethod&quot;, proxyMode)
+	err = checkProxyMethod(proxyMode)
+	if err != nil {
+		return
+	}
+
+	// ignore if proxyModeNone already set
+	currentMethod, _ := m.GetProxyMethod()
+	if proxyMode == proxyModeNone &amp;&amp; currentMethod == proxyModeNone {
+		return
+	}
+
+	ok := proxySettings.SetString(gkeyProxyMode, proxyMode)
+	if !ok {
+		err = fmt.Errorf(&quot;set proxy method through gsettings failed&quot;)
+		return
+	}
+	switch proxyMode {
+	case proxyModeNone:
+		notifyProxyDisabled()
+	default:
+		notifyProxyEnabled()
+	}
+	return
+}
+</code></pre>
+<p>再往下走deepin给了一个注释，原来是这样实现的。</p>
+<blockquote>
+<p>The Deepin proxy gsettings schemas use the same path with<br>
+org.gnome.system.proxy which is /system/proxy. So in fact they<br>
+control the same values, and we don't need to synchronize them<br>
+at all.</p>
+</blockquote>
+<p>大致意思是设置方式同gnome。稍微提一下的是GSetings，因为我以前没见过。</p>
+<p><strong>GSettings</strong> 是应用程序设置的高级 API，“<code>dconf</code>”的前端。“<code>dconf</code>”是管理用户设置，基于键值的配置系统。它是红帽企业版 Linux 7 使用的“<code>GSettings</code>”的后端。“<code>dconf</code>”管理了一系列不同的设置，包括“<code>GDM</code>”、应用程序，以及代理设置。</p>
+<p>对应到深度控制中心就是</p>
+<figure data-type="image" tabindex="1"><img src="http://cdn.pikachu.net.cn/ss-client/SetProxyMethod.gif" alt="图" loading="lazy"></figure>
+<p>在这三个选项之间切换。在本客户端中对应的选项就是这三个Action。</p>
+<figure data-type="image" tabindex="2"><img src="http://cdn.pikachu.net.cn/ss-client/control/proxy.png" alt="图" loading="lazy"></figure>
+<p>手动代理即全局模式，本客户端自动设置好socks5代理，主机和端口号随ss账号定。</p>
+<p>自动代理即pac模式，只有通过pac文件设置了的网址才走代理，其他正常连接。</p>
+<p>为了方便使用，本客户端提供了从GFWList上更新本地pac文件的功能。gfwlist转pac的实现参考</p>
+<p>https://github.com/JinnLynn/genpac</p>
+<h2 id="开机自启动的实现">开机自启动的实现</h2>
+<p>开机自启动有一个比较简单的做法就是，直接把desktop文件扔到<code>~/.config/autostart</code>文件夹下。但是，这样会和deepin启动器的样式有冲突，也不利于检测是否开机自启。deepin启动器关闭开机自启动，在<code>~/.config/autostart</code>文件夹下还是存在desktop文件。所以，我又去找了dde-api。</p>
+<p>以下是配置DBus接口的xml文件。</p>
+<pre><code class="language-xml">     &lt;interface name=&quot;com.deepin.StartManager&quot;&gt;
+          &lt;method name=&quot;AddAutostart&quot;&gt;
+               &lt;arg type=&quot;s&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;b&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;method name=&quot;AutostartList&quot;&gt;
+               &lt;arg type=&quot;as&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;method name=&quot;IsAutostart&quot;&gt;
+               &lt;arg type=&quot;s&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;b&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;method name=&quot;Launch&quot;&gt;
+               &lt;arg type=&quot;s&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;b&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;method name=&quot;LaunchWithTimestamp&quot;&gt;
+               &lt;arg type=&quot;s&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;u&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;b&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;method name=&quot;RemoveAutostart&quot;&gt;
+               &lt;arg type=&quot;s&quot; direction=&quot;in&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;b&quot; direction=&quot;out&quot;&gt;&lt;/arg&gt;
+          &lt;/method&gt;
+          &lt;signal name=&quot;AutostartChanged&quot;&gt;
+               &lt;arg type=&quot;s&quot;&gt;&lt;/arg&gt;
+               &lt;arg type=&quot;s&quot;&gt;&lt;/arg&gt;
+          &lt;/signal&gt;
+     &lt;/interface&gt;
+
+</code></pre>
+<p>这样，我就能和deepin启动器同步了。</p>
+<h2 id="打开文件管理器直接定位到某个文件的实现">打开文件管理器直接定位到某个文件的实现</h2>
+<p>在pac的小项里，有几个用户可以自己编辑的地方，我按照ss-win的做法，直接打开文件管理器并定位到改的文件。这个是调用deepin的一个工具类——<code>DDesktopServices</code></p>
+<pre><code class="language-c++">DDesktopServices::showFileItem(path);
+</code></pre>
+<p>其他的似乎都只需要用一些Qt的基本知识，或者Google一下能慢慢做出来。</p>
+<h1 id="项目小结">项目小结</h1>
+<p>最开始的时候，我是把所有的实现都写在一个文件夹里。当实现的功能越来越多，查找起来很不方便。后来，我做了一个像gradle的目录结构，但是CLion对于嵌套多层CMakeLists.txt的解析好像有点问题，最后目录结果如下</p>
+<pre><code>.
+├── debian.bak
+├── images
+├── Resources
+├── src
+│   ├── common
+│   ├── dao
+│   ├── dbusinterface
+│   ├── model
+│   ├── service
+│   │   └── impl
+│   ├── util
+│   └── widget
+└── translations
+
+</code></pre>
+<p>比较有意思的是，由于我打deb包每次都需要手动输入不少东西，一直没弄懂ss-qt5怎么就<code>dpkg-buildpackage -uc -us -b</code>直接搞定了呢？(见<a href="https://github.com/shadowsocks/shadowsocks-qt5/wiki/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97">ss-qt5安装指南</a>)　所以，我自己动手写了一个脚本，把之前重复的动作，一个一个的通过shell执行一遍。<a href="https://github.com/PikachuHy/shadowsocks-client/blob/master/build.sh">脚本源码</a></p>
+<p>然后是github的好基友——travis持续集成，由于依赖问题，没有办法使用。想想觉得可气。</p>
+<p>哦！有几个需要说明的是，这个客户端比起ss-win来，还有一些功能没有实现</p>
+<ul>
+<li>允许来自局域网的连接</li>
+</ul>
+<p>在deepin上，我还不会开wifi，所以没有办法测试，只能延后了。</p>
+<ul>
+<li>根据统计选择服务器</li>
+</ul>
+<p>在ss-win上，有三种选择自动服务器的策略:负载均衡，高可用，根据统计。我实现了前两种，最后一种，那些统计参数的意义实在难懂，就放弃了。</p>
+<ul>
+<li>正向代理</li>
+</ul>
+<p>见 <a href="https://github.com/shadowsocks/shadowsocks-windows/issues/1080">“允许来自局域网的连接”以及“正向代理”的设置问题</a> 说是翻公司的墙用的。我目前还没有用过，不是很懂，也暂时放弃。后面有需要补上。</p>
+<p>另外一点是<a href="https://github.com/shadowsocks/shadowsocks-windows">shadowsocks-windows</a>实现了AEAD，由于我的底层库<a href="https://github.com/shadowsocks/libQtShadowsocks">libQtShadowsocks</a>没有实现，所以我也没法实现。见<a href="https://github.com/shadowsocks/shadowsocks-qt5/issues/448">Support SIP004 (AEAD Ciphers)</a></p>
+<p>可以说，这个项目还是很有收获的，重新熟悉了Qt，对Qt的Model/View有了更深的认识。比较遗憾的是dropbox目前还是不能通过pac模式登录上去(全局模式可以)，真不知道还有什么地方需要添加到pac文件中。</p>
+<p>特别感谢以下项目</p>
+<ul>
+<li><a href="https://github.com/shadowsocks/shadowsocks-qt5">shadowsocks-qt5</a>及其底层库<a href="https://github.com/shadowsocks/libQtShadowsocks">libQtShadowsocks</a></li>
+<li>Windows版客户端 <a href="https://github.com/shadowsocks/shadowsocks-windows">shadowsocks-windows</a></li>
+<li><a href="https://github.com/linuxdeepin/deepin-deb-installer">deepin-deb-installer</a></li>
+</ul>
+<p>参考文章</p>
+<ul>
+<li><a href="http://www.jianshu.com/p/e871723f9460">深度桌面操作系统架构设计</a></li>
+<li><a href="http://www.jianshu.com/p/deb0ed35c1c2">深度系统监视器原理剖析</a></li>
+</ul>
+<p>做准备的学习记录</p>
+<p><a href="http://www.jianshu.com/p/0079a2ef9e6f">(Deepin 15.4) Qt5.9的下载及安装——开始Qt之旅</a></p>
+<p><a href="http://www.jianshu.com/p/4d19d2ce9ca7">说说QtQuick提供的类型</a></p>
+<p><a href="http://www.jianshu.com/p/81c870c07fb3">从MVC到Model-View-Delegate</a></p>
+<p><a href="http://www.jianshu.com/p/42af0fcbe6fc">Qt宏Q_OBJECT展开记录</a></p>
+<p><a href="http://blog.csdn.net/qq_32768743/article/details/75356293">ss学习记录</a></p>
+<h1 id="附">附：</h1>
+<p>界面图</p>
+<figure data-type="image" tabindex="3"><img src="http://cdn.pikachu.net.cn/ss-client/SetProxyMethod.gif" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="http://cdn.pikachu.net.cn/ss-client/control/proxy.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="http://cdn.pikachu.net.cn/ss-client/menu/proxy/pac.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="http://cdn.pikachu.net.cn/ss-client/menu/proxy.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="http://cdn.pikachu.net.cn/ss-client/menu/server.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="http://cdn.pikachu.net.cn/ss-client/menu/pac.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="9"><img src="http://cdn.pikachu.net.cn/ss-client/menu/update.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="10"><img src="http://cdn.pikachu.net.cn/ss-client/profile.png" alt="图" loading="lazy"></figure>
+<figure data-type="image" tabindex="11"><img src="http://cdn.pikachu.net.cn/ss-client/share.png" alt="图" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%81%9A%E5%BD%B1%E6%A2%AD%E5%AE%A2%E6%88%B7%E7%AB%AF">为什么要做影梭客户端？</a></li>
+<li><a href="#%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90">技术原理剖析</a>
+<ul>
+<li><a href="#ss%E4%BB%A3%E7%90%86%E7%9A%84%E5%AE%9E%E7%8E%B0">ss代理的实现</a></li>
+<li><a href="#%E4%B8%89%E7%A7%8D%E4%BB%A3%E7%90%86%E6%96%B9%E5%BC%8F%E7%9A%84%E5%AE%9E%E7%8E%B0">三种代理方式的实现</a></li>
+<li><a href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">开机自启动的实现</a></li>
+<li><a href="#%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8%E7%9B%B4%E6%8E%A5%E5%AE%9A%E4%BD%8D%E5%88%B0%E6%9F%90%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%9E%E7%8E%B0">打开文件管理器直接定位到某个文件的实现</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E5%B0%8F%E7%BB%93">项目小结</a></li>
+<li><a href="#%E9%99%84">附：</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1b3bd6e44c67a55f4d25',
+    clientSecret: '7a2164e9c32fb8fbe6d2c9fa39462df62ee55a6a',
+    repo: 'blog',
+    owner: 'PikachuHy',
+    admin: ['PikachuHy'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.pikachu.net.cn/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

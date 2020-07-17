@@ -1,0 +1,472 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>云计算时代的大数据查询分析优化 初赛小结 | 大黄老鼠的番茄酱</title>
+<link rel="shortcut icon" href="https://blog.pikachu.net.cn/favicon.ico?v=1594996394376">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://blog.pikachu.net.cn/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="云计算时代的大数据查询分析优化 初赛小结 | 大黄老鼠的番茄酱 - Atom Feed" href="https://blog.pikachu.net.cn/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="这个比赛做了大概二十来天的样子，起初是为了练习数据结构与算法，后面渐渐偏离的初心，现在不得不放弃。一个是实在没有时间，课太多了。二是做这个已经严重的干扰到我的正常学习和生活。今天对这个比赛的过程简单做了一个总结。
+
+背景
+9月27日，老师在..." />
+    <meta name="keywords" content="总结" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://blog.pikachu.net.cn">
+  <img class="avatar" src="https://blog.pikachu.net.cn/images/avatar.png?v=1594996394376" alt="">
+  </a>
+  <h1 class="site-title">
+    大黄老鼠的番茄酱
+  </h1>
+  <p class="site-description">
+    我以前没得选择，现在我想做一个好人。——阿明
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="https://www.yuque.com/pikachuhy/leetcode" class="menu" target="_blank">
+          LeetCode
+        </a>
+      
+    
+      
+        <a href="/post/manfest/" class="menu">
+          Manfest
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/PikachuHy" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              云计算时代的大数据查询分析优化 初赛小结
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-10-31
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://blog.pikachu.net.cn/tag/2YDHETYRj/" class="post-tag">
+                  # 总结
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://wid.s3.cn-north-1.amazonaws.com.cn/uploads/images/2019-08-23/%E9%98%BF%E9%87%8C%E4%BA%91-134352.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>这个比赛做了大概二十来天的样子，起初是为了练习数据结构与算法，后面渐渐偏离的初心，现在不得不放弃。一个是实在没有时间，课太多了。二是做这个已经严重的干扰到我的正常学习和生活。今天对这个比赛的过程简单做了一个总结。</p>
+<!-- more -->
+<h1 id="背景">背景</h1>
+<p>9月27日，老师在群里发了CCF的这个比赛。我在众多比赛中选中了 <a href="https://www.datafountain.cn/competitions/347">云计算时代的大数据查询分析优化</a>，赛题是基于海量数据场景下，借助于CPU新指令或新硬件，提升复杂计算的效率。选中它的理由大概是它是所有比赛中唯一一个不是机器学习的，而且要实现这个查询的功能，需要实现非常多的数据结构。而我开始的目的仅仅是为了训练自己的数据结构和算法。</p>
+<p>题目内容什么就不说了，只提一下，这个数据量有6亿条，应该是我第一次处理上亿的数据量。这个题目的核心挑战主要是</p>
+<ul>
+<li>软硬一体化</li>
+<li>算法</li>
+</ul>
+<p>当然，我的目标只是做算法和数据结构，所以只能专注于算法。</p>
+<h1 id="结果">结果</h1>
+<p>截止10月10日，所有队伍最好的实现是6s（多个查询）<br>
+截止10月28日，我的实现最好是40s（单个查询）<br>
+不考虑其他，仅粗略估计，性能相差7倍。</p>
+<p>当然，我提交的评测没有成绩，因为我分配的内存过大，官方写的120G，实际可以用的后面官方解释说是不到100G。还有可能是我的代码有内存方面的问题，导致大批量的查询内存超标。实际上，在最后一次检查和测试代码的时候，我发现我的查询部分存在内存泄露问题，即每查询一次，内存增加128G * 0.4%左右的内存。</p>
+<p>实力不如别人，自然心服口服，以后如果有机会，自然还要挑战一次。</p>
+<h1 id="实现过程">实现过程</h1>
+<p>总体的过程大致可以分成以下几个步骤</p>
+<ul>
+<li>读数据文件</li>
+<li>数据过滤</li>
+<li>建立索引</li>
+<li>表连接</li>
+<li>分组求和</li>
+<li>取Topn</li>
+<li>输出结果</li>
+</ul>
+<h2 id="读数据文件">读数据文件</h2>
+<p>C语言或者linux操作系统提供了4个读文件的API，分别是</p>
+<pre><code class="language-c">fscanf, fread, fgets, mmap
+</code></pre>
+<p>测试的性能</p>
+<figure data-type="image" tabindex="1"><img src="http://cdn.pikachu.net.cn//blog/df347/api_read.png" alt="image-20191031205725585" loading="lazy"></figure>
+<p>当然，这里跟我解析数据的实现相关，如果不解析数据，读完16G的文件，也只要零点几秒，所以读数据不是瓶颈。</p>
+<p>这里我放一张读lineitem的图</p>
+<figure data-type="image" tabindex="2"><img src="http://cdn.pikachu.net.cn/blog/df347/lineitem_read.png" alt="image-20191031211703383" loading="lazy"></figure>
+<p>具体地，有整数的解析，浮点数的解析，日期的解析，在这次的场景中，我全部换成整数算的。</p>
+<h3 id="整数的解析">整数的解析</h3>
+<pre><code class="language-c">int key = 0;
+while(*buffer != '|') {
+   key = key * 10 + *buffer - '0';
+   buffer++;
+}
+</code></pre>
+<p>代码看起来很简单，我没有调用库函数，因为库函数比我的这个粗暴的做法慢。</p>
+<p>这里有一个乘10的操作，我还特地查了怎么去乘10，结果发现直接<code>a*10</code>比<code>a&lt;&lt;3 + a&lt;&lt;1</code>快。</p>
+<h3 id="浮点数的解析">浮点数的解析</h3>
+<pre><code class="language-c">        int price = 0;
+        while (*buffer != '|') {
+            if(*buffer == '.') {
+                buffer++;
+                continue;
+            }
+            price = price * 10 + *buffer - '0';
+            buffer++;
+        }
+</code></pre>
+<p>我是把它当成整数用的，也很粗暴，为了啥，性能。</p>
+<h3 id="日期的解析">日期的解析</h3>
+<pre><code class="language-c">#define sdate2idate(idate, sdate) \
+idate = \
+ (sdate[0] - '0') * 10000000 \
++(sdate[1] - '0') * 1000000 \
++(sdate[2] - '0') * 100000 \
++(sdate[3] - '0') * 10000 \
++(sdate[5] - '0') * 1000 \
++(sdate[6] - '0') * 100 \
++(sdate[8] - '0') * 10 \
++(sdate[9] - '0') ;
+</code></pre>
+<p>因为日期的格式是确定的。对日期的解析，我的处理方式更粗暴，就是一个宏，直接算完。</p>
+<h2 id="数据过滤">数据过滤</h2>
+<p>我开始是没有这步的，后面做完后才加上去。具体实现为</p>
+<ol>
+<li>
+<p>对查询参数做统计，最大，最小，区间</p>
+</li>
+<li>
+<p>读数据时只写入可能查询的数据到内存</p>
+</li>
+</ol>
+<h2 id="建立索引">建立索引</h2>
+<p>建索引常用的数据结构有</p>
+<ul>
+<li>b-树</li>
+<li>b+树</li>
+<li>skiplist</li>
+</ul>
+<p>我在实现时，尝试了skiplist但是插入性能不理想。</p>
+<p>实际在用的是hash。因为这次的数据custkey和orderkey，都是连续递增，且是从1开始。所以我这个实现是严重过拟合的。</p>
+<p>实际的SQL，还有一个日期范围查询，我想用跳表做，于是学了一个星期的跳表，然后用C写了一个实现（参考redis），但是仅插入就花了100+s，基本不可用。</p>
+<p>这里我放一张为lineitem建立索引的图</p>
+<figure data-type="image" tabindex="3"><img src="http://cdn.pikachu.net.cn/blog/df347/lineitem_index.png" alt="image-20191031211750917" loading="lazy"></figure>
+<h2 id="表连接">表连接</h2>
+<p>表连接的算法有</p>
+<ul>
+<li>Nested-Loop Join(Simple, Index, Block)</li>
+<li>Hash Join</li>
+<li>Merge Join</li>
+</ul>
+<p>都很好理解，我用的其实算是Index Nested-Loop Join。</p>
+<p>简单说，就是3重for循环。</p>
+<h2 id="topn">topn</h2>
+<p>这个我查到了可以用</p>
+<ul>
+<li>堆排序</li>
+<li>并行取topk，然后合并为topn</li>
+</ul>
+<p>代码都还好写，但我没有做并行。</p>
+<h2 id="失败的并行">失败的并行</h2>
+<p>并行化读15M custome需要30s，而串行只要0.25s<br>
+并行化建立索引，比串行慢<br>
+读数据用生产者——消费者模型，比串行慢</p>
+<p>这里的原因，我不清楚，网上说有CPU缓存的问题，我还没法证实。</p>
+<h2 id="失败的跳表">失败的跳表</h2>
+<p>跳表(skiplist)是一种随机化的数据结构，基于并联的链表。插入、删除、查找的复杂度都是O(logN)。其性能匹敌红黑树，实现简单。在LevelDB，Redis中有运用。 但是，我跳表建立索引 100+ s。</p>
+<p>这里的原因有很多。</p>
+<ul>
+<li>我对跳表还不是很理解</li>
+<li>我的跳表实现有问题</li>
+<li>我的跳表用法有问题</li>
+</ul>
+<p>总之，兴奋的做了一个高级数据结构，结果效果这么差，还是挺打击人的。</p>
+<p>学这个跳表，也让我感受到了，如果我要学一个东西，就应该专门的去学习一个东西，别想着我只用它插入的部分，其他的我不用就不要学。最后都是要弄懂的，反而花了更多的时间。另一个是这种高级数据结构，如果找不到参考实现，就去经典应用里面抄一个，即便第一次看不懂，抄一遍后，看一些其他人的解释，就好懂多了。</p>
+<h1 id="未来可能的优化点">未来可能的优化点</h1>
+<ul>
+<li>硬件部分</li>
+</ul>
+<p>硬件部分是永不放弃的并行化。CPU有16个核心，GPU有上千个核心，还有SIMD等，都可以想办法利用起来。</p>
+<ul>
+<li>软件部分</li>
+</ul>
+<p>软件部分是对数据结构与算法永无止境的追求，要去找到一种更加高效的数据结构和算法来更快的读文件、建立索引、做表连接。</p>
+<h1 id="小结">小结</h1>
+<p>我的算法实现和别人的算法实现性能差异巨大，未来仍需要努力，可成长的空间还非常大。优化是一个渐进的过程，螺旋上升的过程，需要profile。当然咯，看着我的性能指标一点一点往上走，看着一个又一个的数据结构得以实现，发挥作用，那种感觉真的非常棒。</p>
+<p>这次的经历，我学到了啥？</p>
+<p>我想，首先是数据结构真不是那么好实现的。如果再来一次，我肯定先用C++ STL写一遍，作为一个baseline，然后自己实现一套兼容用到的STL接口的数据结构，直接替换，以提高性能。</p>
+<p>其次是mmap，这个用得我真的是有些惊了。当时为了看文件的读取，还特地买了《UNIX环境高级编程》，但是实际上没有起到什么作用。看了文件读取和线程部分，对性能提升并没有我想象中的那么好。</p>
+<p>再就是多线程不是万能的。长长听说，啥啥不行就用多线程什么的，根据这次的经历，多线程也是要看环境的，用多线程最好也测试一下，不然性能反而不如单线程。</p>
+<p>最后一个就是对语言本身的练习和思考了。用了这么久的C，发现用它学习数据结构还是挺好的，真正到了用的时候，还是要用成熟的库去做，一来节约时间，性能有个底，二来，自己写的数据结构，很难一次性写好无bug。真要自己手写，还是要定位到就是这个库函数在我们的场景下性能不行。C的宏是真的容易满天飞，我也不知道这是好事还是坏事。还有，c写容器真的痛苦😖。</p>
+<h1 id="附">附</h1>
+<p>整理一下，这次写的一些宏</p>
+<pre><code class="language-c">// 测试代码块运行时间
+#define BENCHMARK(F) \
+{ \
+clock_t begintime, endtime; \
+begintime = clock();\
+F;\
+endtime = clock(); \
+printf(&quot;%s:%d:%fs\n&quot;, __FILE__, __LINE__, (endtime - begintime) * 1.0 / CLOCKS_PER_SEC);\
+}
+
+// 日志
+#define DEBUG(fmt, ...) printf(&quot;[DEBUG] &quot;); printf(fmt, ##__VA_ARGS__); printf(&quot;\n&quot;)
+#define ERROR(fmt, ...) printf(&quot;[ERROR] &quot;); printf(fmt, ##__VA_ARGS__); printf(&quot;\n&quot;)
+
+// 测试
+#define PRINT_PLACE printf(&quot;[%s]-%s:%s:%-5d&quot;, __TIMESTAMP__, __FUNCTION__, __FILE__, __LINE__);
+
+#define ASSERT_INT_EQUAL(ret, expected) \
+\
+    { \
+        clock_t begintime, endtime; \
+        begintime = clock(); \
+        int actual = ret; \
+        PRINT_PLACE \
+        if (actual == expected) { \
+            printf(&quot;\033[32mPASS\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+        } else { \
+            printf(&quot;\033[31mFAIL\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+            printf(&quot;expected: %d\n&quot;, expected); \
+            printf(&quot;actual: %d\n&quot;, actual); \
+        } \
+    }
+
+#define ASSERT_TRUE(ret) \
+\
+    { \
+        clock_t begintime, endtime; \
+        begintime = clock(); \
+        bool actual = ret; \
+        PRINT_PLACE \
+        if (actual) { \
+            printf(&quot;\033[32mPASS\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+        } else { \
+            printf(&quot;\033[31mFAIL\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+            printf(&quot;expected: true\n&quot;); \
+            printf(&quot;actual: false\n&quot;); \
+        } \
+    }
+
+#define ASSERT_FALSE(ret) \
+\
+    { \
+        clock_t begintime, endtime; \
+        begintime = clock(); \
+        bool actual = ret; \
+        PRINT_PLACE \
+        if (!actual) { \
+            printf(&quot;\033[32mPASS\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+        } else { \
+            printf(&quot;\033[31mFAIL\033[0m&quot;); \
+            endtime = clock(); \
+            PrintTime(endtime - begintime); \
+            printf(&quot;expected: false\n&quot;); \
+            printf(&quot;actual: true\n&quot;); \
+        } \
+    }
+
+void PrintTime(double time) {
+    printf(&quot; %fs\n&quot;, time / CLOCKS_PER_SEC);
+}
+
+void PrintBool(bool X) {
+    if(X){
+        printf(&quot;true&quot;);
+    } else {
+        printf(&quot;false&quot;);
+    }
+}
+
+</code></pre>
+<p>我希望，相较于这些宏，用一种更易于调试的方式去写。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E7%BB%93%E6%9E%9C">结果</a></li>
+<li><a href="#%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B">实现过程</a>
+<ul>
+<li><a href="#%E8%AF%BB%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6">读数据文件</a>
+<ul>
+<li><a href="#%E6%95%B4%E6%95%B0%E7%9A%84%E8%A7%A3%E6%9E%90">整数的解析</a></li>
+<li><a href="#%E6%B5%AE%E7%82%B9%E6%95%B0%E7%9A%84%E8%A7%A3%E6%9E%90">浮点数的解析</a></li>
+<li><a href="#%E6%97%A5%E6%9C%9F%E7%9A%84%E8%A7%A3%E6%9E%90">日期的解析</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4">数据过滤</a></li>
+<li><a href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95">建立索引</a></li>
+<li><a href="#%E8%A1%A8%E8%BF%9E%E6%8E%A5">表连接</a></li>
+<li><a href="#topn">topn</a></li>
+<li><a href="#%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%B9%B6%E8%A1%8C">失败的并行</a></li>
+<li><a href="#%E5%A4%B1%E8%B4%A5%E7%9A%84%E8%B7%B3%E8%A1%A8">失败的跳表</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9C%AA%E6%9D%A5%E5%8F%AF%E8%83%BD%E7%9A%84%E4%BC%98%E5%8C%96%E7%82%B9">未来可能的优化点</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+<li><a href="#%E9%99%84">附</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://blog.pikachu.net.cn/post/hualet-with-deepin/">
+              <h3 class="post-title">
+                【转载】与deepin一起 做更好的自己
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: '1b3bd6e44c67a55f4d25',
+    clientSecret: '7a2164e9c32fb8fbe6d2c9fa39462df62ee55a6a',
+    repo: 'blog',
+    owner: 'PikachuHy',
+    admin: ['PikachuHy'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://blog.pikachu.net.cn/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
