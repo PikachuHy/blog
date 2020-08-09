@@ -2,20 +2,19 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>观《第9届深度开发者与用户大会》有感 | 大黄老鼠的番茄酱</title>
+<title>Build Guile 1.8 with CMake | 大黄老鼠的番茄酱</title>
 <link rel="shortcut icon" href="https://blog.pikachu.net.cn/favicon.ico?v=1596973245366">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://blog.pikachu.net.cn/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="观《第9届深度开发者与用户大会》有感 | 大黄老鼠的番茄酱 - Atom Feed" href="https://blog.pikachu.net.cn/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="Build Guile 1.8 with CMake | 大黄老鼠的番茄酱 - Atom Feed" href="https://blog.pikachu.net.cn/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="11月23日，第9届深度开发者与用户大会正式召开。满怀着期待，早早的打开了《IT大咖说》。总的来说，这次的大会还是有不少好东西的，当然，直播的效果是真的差。
-
-总体流程
-原定于9点开始的大会，被推迟到了9点半，而且9点到9点半的这段时间非常..." />
-    <meta name="keywords" content="deepin" />
+    <meta name="description" content="hi, I'd like to introduce my guile cmake build scripts to you:
+https://github.com/PikachuHy/guile
+Its final target is to..." />
+    <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -99,68 +98,98 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              观《第9届深度开发者与用户大会》有感
+              Build Guile 1.8 with CMake
             </h2>
             <div class="post-info">
               <span>
-                2019-11-23
+                2020-08-09
               </span>
               <span>
                 4 min read
               </span>
               
-                <a href="https://blog.pikachu.net.cn/tag/Ou8ZxuOIol/" class="post-tag">
-                  # deepin
-                </a>
-              
             </div>
             
-              <img class="post-feature-image" src="http://cdn.pikachu.net.cn/blog/dduc-9.jpg" alt="">
+              <img class="post-feature-image" src="https://www.gnu.org/software/guile/static/base/img/kid-programming-a-robot.png" alt="">
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>11月23日，第9届深度开发者与用户大会正式召开。满怀着期待，早早的打开了《IT大咖说》。总的来说，这次的大会还是有不少好东西的，当然，直播的效果是真的差。</p>
+                <p>hi, I'd like to introduce my guile cmake build scripts to you:<br>
+https://github.com/PikachuHy/guile<br>
+Its final target is to provide an MSVC-version guile, which is basic work of MSVC-version TeXmacs. At present, you can use my cmake scripts to build guile 1.8 in ubuntu 20.04 and Windows mingw32. In the future, I will continue to explore the way of providing well-running version guile 1.8 in Windows.</p>
+<p>TL;DR</p>
 <!-- more -->
-<h1 id="总体流程">总体流程</h1>
-<p>原定于9点开始的大会，被推迟到了9点半，而且9点到9点半的这段时间非常混乱。开始后，倪光南院士的开场我没有听到。然后工信部的领导讲话，直播直接被掐。体验相当的差，一度以为直播挂了。</p>
-<p>领导讲完后就是深度的专家讲了一下比赛的情况，后面还有华为的，龙芯的，工信部的讲了一些，没做笔记，现在记得太清了。上午还有一个重要的事情就是给大赛的项目颁奖，几个主要的项目是远程控制软件，OJ，还有做图像的。最后是获奖的几个项目发言，反正差不多就是广告。</p>
-<p>下午倒是蛮准时的，我迟了2分钟开直播，大会已经开始了。</p>
-<p>首先是刘总讲了设计理念，deepin的东西的确做得非常的漂亮，简洁，好用，克制。但我总感觉，一个重要的原因是做的功能非常少，有很多时候给我的感觉就是，不折腾其他的，也刚好能用，就不折腾了吧。刘总最后还讲了一个期望，希望deepin能自成一派，这个5年后再看吧！</p>
-<p>然后深度CTO张磊讲，说真的，我真没听出张磊讲了什么特别实质的东西，结束了的时候，我都是懵的。</p>
-<p>接着又是华为和龙芯，都说了自己做了操作系统，感觉离我还比较远。华为讲一个用机器学习的方式（分类，聚类）对操作系统，应用软件的参数进行调优，还是蛮新奇的。</p>
-<p>诚迈科技的讲了操作系统的一些历史，发展，最后给了一个结论，deepin能成。</p>
-<p>中望CAD也出了deepin版本，对这个软件不熟。科大讯飞好好秀了一把肌肉，各种冠军，还扔出一个输入法。紧接着就是搜狗上去讲自己的搜狗输入法，新版本主要多了一个皮肤，多了一个deepin id同步。金山WPS主要是讲后面多个应用合一个，提了下公式编辑器，开发接口的事情。最后一个是希沃，放了好多视频。</p>
-<h1 id="大会吐槽">大会吐槽</h1>
+<h2 id="motivation">Motivation</h2>
+<p>TeXmacs is an useful scientific editing platform, which depends on Guile 1.8 now. I'm a heavy user of TeXmacs and almost use it everyday. When the error occurs in TeXmacs, it's a terrible user experience. Thus, I want to debug TeXmacs and custom it. Unfortunately, building a debug environment<br>
+is not easy, especially my work heavily depends on Windows System.<br>
+There are many mingw version guiles in GitHub(search with keywords: guile mingw).</p>
 <ul>
-<li>感人的直播画质</li>
+<li>https://github.com/jralls/guile</li>
+<li>https://github.com/mkeeter/guile-mingw/</li>
+<li>https://github.com/cygwinports-extras/mingw64-i686-guile</li>
+<li>https://github.com/slowphil/mingw-w64-guile1.8</li>
 </ul>
-<p>这次DDUC的直播画质，真的超级差，眼睛都快瞎了。最后一段时间，还老是掉。</p>
+<p>My work bases on mingw-w64-guile1.8, which is used by Windows-version TeXmacs and use the mirror of guile<br>
+https://github.com/texmacs/guile</p>
+<h2 id="implementation">Implementation</h2>
+<p>Current code host in:<br>
+https://github.com/PikachuHy/guile<br>
+Main scripts:</p>
 <ul>
-<li>一言难尽的主持人</li>
+<li>CMakeLists.txt</li>
+<li>libguile/CMakeLists.txt</li>
+<li>cmake/*</li>
+<li>and others for test</li>
 </ul>
-<p>主持人的说话的时候，总觉得停顿有问题。而且衔接真的只能说，明年请继续加油。</p>
-<ul>
-<li>领导不可说的小秘密</li>
-</ul>
-<p>这段掐直播的时候，真是不可描述。</p>
-<ul>
-<li>不和谐的弹幕</li>
-</ul>
-<p>这个直播是放在《IT大咖秀》上的，可以发弹幕，然后总有人发一些让人讨厌的东西。最重要的是，没法关闭。</p>
-<ul>
-<li>还有很多其他的问题，就不一一列举了</li>
-</ul>
-<h1 id="小结">小结</h1>
-<p>看习惯了各大手机厂商的发布会，看DDUC就感觉直接回到了不知道多少年前。</p>
-<p>这次大会，听得最多就是“平台”二字，个个都想做平台。不过的确可以看到deepin的发展越来越好了，有越来越多的厂商参与进来，等到deepin V20正式发布的时候，应该是有很不错的体验。</p>
-<p>但是，有那么一瞬间，我突然发现deepin离我越来越远了。它似乎不再是我认识的那个deepin，又有点像。算一算时间，DDUC已经是办了9年了，我用iMac的时间也快半年了吧。过去的这些日子，我鲜有打开deepin V15，甚至都很少用Windows 10。我在想，在过去的9年时间里，有多少人可能是像我一样，一直在等着一个更好用的deepin，最后用了mac。</p>
+<p>Main difficulty: How to generate config.h?<br>
+I use a stupid but useful way, write all check cases one by one.<br>
+https://github.com/PikachuHy/guile/blob/1.8-cmake/cmake/AutotoolCheck.cmake<br>
+I think this maybe helpful for other projects when writing cmake script.</p>
+<p>Another difficulty: How to generate xxx.x (e.g. alist.x)<br>
+In original code, it used a generated sh script named guile-snarf. I write a python script with the same function to finish this work.<br>
+https://github.com/PikachuHy/guile/blob/1.8-cmake/cmake/gen_dot_x.py<br>
+Notice that, I also write cmd scripts and sh scripts for the same work.  But finally, I choose python-version scripts as my default scripts.</p>
+<h2 id="result">Result</h2>
+<p>My development IDE is CLion 2020.2 with its bundled cmake.</p>
+<h3 id="in-ubuntu-2004">In ubuntu 20.04</h3>
+<p>Guile is built successfully and all examples run well. All tests run successfully except document-related test. I build the latest TeXmacs successfully and it runs well with both static and dynamic Guile library.</p>
+<h3 id="msys2mingw64">msys2/mingw64</h3>
+<p>In windows 10 Version 10.0.19041 Build 19041, msys2/mingw64 (CLion check: w64 8.0)<br>
+Guile is built successfully, but crashes.<br>
+https://github.com/PikachuHy/guile/issues/5<br>
+The main problem is the lengths of long and pointers differ.</p>
+<h3 id="msys2mingw32">msys2/mingw32</h3>
+<p>In windows 10 Version 10.0.19041 Build 19041, msys2/mingw32 (CLion check: w64 8.0)<br>
+Guile is built successfully and run well. Howerver, some examples run crash. (e.g. box-dynamic) When I built the latest TeXmacs, I met the problem: sys/socket.h: No such file or directory<br>
+https://github.com/PikachuHy/guile/issues/12<br>
+https://stackoverflow.com/questions/13694233/sys-socket-h-in-mingw32</p>
+<h3 id="msvc">MSVC</h3>
+<p>In windows 10 Version 10.0.19041 Build 19041, MSVC<br>
+Guile is compiled fail for no MSVC gmp library.<br>
+https://github.com/PikachuHy/guile/issues/10<br>
+We should firstly compile the MSVC-version gmp. I find that,<br>
+https://wiki.sagemath.org/windows/msvc32-2008-gmp</p>
+<h2 id="conclusion-and-future-work">Conclusion and Future work</h2>
+<p>This is just the first step to build MSVC-version guile(and MSVC-version TeXmacs). Now we can use cmake to build guile, it is convenient to debug in CLion. (Although CLion supports Makefile in 2020.2). Next work is to write cmake scripts for gmp and provide a well-running version guile in Windows.</p>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
-<li><a href="#%E6%80%BB%E4%BD%93%E6%B5%81%E7%A8%8B">总体流程</a></li>
-<li><a href="#%E5%A4%A7%E4%BC%9A%E5%90%90%E6%A7%BD">大会吐槽</a></li>
-<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+<li>
+<ul>
+<li><a href="#motivation">Motivation</a></li>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#result">Result</a>
+<ul>
+<li><a href="#in-ubuntu-2004">In ubuntu 20.04</a></li>
+<li><a href="#msys2mingw64">msys2/mingw64</a></li>
+<li><a href="#msys2mingw32">msys2/mingw32</a></li>
+<li><a href="#msvc">MSVC</a></li>
+</ul>
+</li>
+<li><a href="#conclusion-and-future-work">Conclusion and Future work</a></li>
+</ul>
+</li>
 </ul>
 
               </div>
@@ -171,9 +200,9 @@
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://blog.pikachu.net.cn/post/df347/">
+            <a href="https://blog.pikachu.net.cn/post/shenzhen-trip/">
               <h3 class="post-title">
-                云计算时代的大数据查询分析优化 初赛小结
+                深圳之行
               </h3>
             </a>
           </div>
